@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户</title>
+    <section class="layui-larry-box">
+        <div class="layui-tab">
+            <blockquote class="layui-elem-quote news_search">
+                <div class="layui-inline">
+                    <form class="layui-form" id="queryForm" method="post">
+
+                        <div class="layui-input-inline">
+                            <label class="layui-form-label">代理商名称 </label>
+                            <div class="layui-input-block">
+                                <input value="" placeholder="代理商名称" id="AGENT_NAME" name="AGENT_NAME"
+                                       class="layui-input search_input" type="text">
+                            </div>
+                        </div>
+                        <button type="reset" class="layui-btn layui-btn-primary" onclick="initPayment()">查询</button>
+                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                        <button class="layui-btn" type="button" lay-filter="demo1" onclick="dataSync(this)">数据同步
+                        </button>
+                    </form>
+                </div>
+            </blockquote>
+            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+                <legend> 代理商黑名单配置列表</legend>
+
+            </fieldset>
+
+            <div class="layui-form news_list">
+                <div align="right">
+                    <button class="layui-btn" type="button" lay-filter="demo1" onclick="add(this)">添加</button>
+                    <button class="layui-btn" type="button" lay-filter="demo1" onclick="exportBlackData(this)">导出
+                    </button>
+                    <button class="layui-btn" type="button" lay-filter="demo1" onclick="impretBlackData(this)">导入
+                    </button>
+                </div>
+
+                <table class="layui-table">
+                    <colgroup>
+                        <col width="30">
+                        <col width="30">
+                        <col width="90">
+                        <col width="90">
+                        <col width="150">
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th>代理商名称</th>
+                        <th>备注</th>
+                        <th>创建人</th>
+                        <th>创建时间</th>
+                        <th>生效时间</th>
+                        <th>失效时间</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody class="news_content" id="table">
+
+                    </tbody>
+                </table>
+                <div>
+                    <!-- 分页按钮 -->
+
+                    <div id="demo5"></div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <input type="hidden" id="pages" value="1"/>
+        <input type="hidden" id="curr" value="1"/>
+        <div style="display: none;">
+            <div class="layui-form" id="show">
+                <table class="layui-table" id="show1">
+                </table>
+            </div>
+        </div>
+    </section>
+</head>
+<body>
+你试试
+<script>
+    //分页查询
+    function initPayment(curr) {
+        var agentName = $('#AGENT_NAME').val();
+
+        if (curr == null || curr == '') {
+            curr = 1;
+        }
+        $("#curr").val(curr);
+        $.ajax({
+            url: base.baseUrl + 'agentConfigure/agentBlackConfigureList',
+            xhrFields: {
+                withCredentials: true
+            },
+            data: {
+                "queryPage": curr,
+                "querySize": 10,
+                "AGENT_NAME": agentName,
+                TOKEN: sessionStorage.getItem("token")
+            },
+            dataType: "json",
+            success: function (res) {
+                var options = "";
+                $("#table").empty("");
+                currentPage(res.RESULT_OBJECT, res.RESULT_OBJECT.count, res.RESULT_OBJECT.pageNum);
+                for (var i = 0; i < res.RESULT_OBJECT.list.length; i++) {
+                    options += '<tr id="qingkon">'
+                        + '<td>'
+                        + res.RESULT_OBJECT.list[i].AGENT_NAME
+                        + '</td>'
+                        + '<td>'
+                        + (res.RESULT_OBJECT.list[i].REMARKS == null ? '' : res.RESULT_OBJECT.list[i].REMARKS)
+                        + '</td>'
+                        + '<td>'
+                        + res.RESULT_OBJECT.list[i].CREATE_STAFF
+                        + '</td>'
+                        + '<td>'
+                        + layui.util.toDateString(res.RESULT_OBJECT.list[i].CREATE_TIME, 'yyyy-MM-dd HH:mm:ss')
+                        + '</td>'
+                        + '<td>'
+                        + (res.RESULT_OBJECT.list[i].EFFECTIVE_TIME == null ? '' : res.RESULT_OBJECT.list[i].EFFECTIVE_TIME)
+                        + '</td>'
+                        + '<td>'
+                        + (res.RESULT_OBJECT.list[i].EXPIRATION_TIME == null ? '' : res.RESULT_OBJECT.list[i].EXPIRATION_TIME)
+                        + '</td>'
+                        + '<td>'
+                        + '<button type="button" class="layui-btn " onclick="updateAgent(this,'
+                        + JSON.stringify(res.RESULT_OBJECT.list[i])
+                            .replace(/"/g, '&quot;')
+                        + ');">编辑</button>'
+                        + '<button type="button" class="layui-btn layui-btn-danger" onclick="deletebyid(this,\''
+                        + res.RESULT_OBJECT.list[i].AGENT_BLACK_ID
+                        + '\')">删除</button>'
+                        + '</td>'
+                        + '</tr>';
+                }
+                $("#table").append(options);
+            }
+        });
+    };
+
+</script>
+</body>
+</html>
