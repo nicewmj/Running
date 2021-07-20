@@ -40,7 +40,7 @@ public class TestTask {
      *
      */
 //    @Async("taskExecutor")
-    @Scheduled(cron = "*/10 * * * * ?")
+//    @Scheduled(cron = "*/10 * * * * ?")
     public void test1() {
         log.info("=========test1任务启动============");
         try {
@@ -52,7 +52,7 @@ public class TestTask {
     }
 
 //    @Async("taskExecutor")
-    @Scheduled(cron = "*/10 * * * * ?")
+//    @Scheduled(cron = "*/10 * * * * ?")
     public void test2() {
         log.info("=========test2任务启动============");
         try {
@@ -65,7 +65,7 @@ public class TestTask {
     }
 
 //    @Async("taskExecutor")
-    @Scheduled(cron = "*/10 * * * * ?")
+//    @Scheduled(cron = "*/10 * * * * ?")
     public void test3() {
         log.info("=========test3任务启动============");
         try {
